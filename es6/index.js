@@ -119,6 +119,11 @@ PrerenderSPAPlugin.prototype.apply = function (compiler) {
           return mkdirp(path.dirname(processedRoute.outputPath))
             .then(() => {
               return new Promise((resolve, reject) => {
+                processedRoute.html = processedRoute.html.replace(/<title>(.*)<\/title>/, (params) => {
+                  params = params.replace('&lt;', '<')
+                  params = params.replace('&gt;', '>')
+                  return params
+                })
                 compilerFS.writeFile(processedRoute.outputPath, processedRoute.html.trim(), err => {
                   if (err) reject(`[prerender-spa-plugin] Unable to write rendered route to file "${processedRoute.outputPath}" \n ${err}.`)
                   else resolve()
